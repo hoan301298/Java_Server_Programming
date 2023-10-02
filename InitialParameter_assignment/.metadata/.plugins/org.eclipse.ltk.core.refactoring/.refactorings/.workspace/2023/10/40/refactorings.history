@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;ServletCommunication&apos; to &apos;InitialParameter_assignment&apos;" description="Rename resource &apos;ServletCommunication&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/ServletCommunication" name="InitialParameter_assignment" stamp="1696275075953" updateReferences="true"/>
+</session>

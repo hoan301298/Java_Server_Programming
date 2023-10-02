@@ -1,0 +1,79 @@
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet(urlPatterns = "/loginServlet")
+public class loginServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private Connection conn;
+	PreparedStatement statement;
+	
+	public void init(ServletConfig config) {
+		ServletContext context = config.getServletContext();
+		
+		String driverClass = context.getInitParameter("driverClass");
+		String db = "jdbc:mariadb://mariadb.vamk.fi:3306/e2000575_Student_JSP";
+		
+		String dbUser = context.getInitParameter("db_user");
+		String dbPassword = context.getInitParameter("db_password");
+		
+		try {
+			Class.forName(driverClass);
+			conn = DriverManager.getConnection(db, dbUser, dbPassword);
+			statement = conn.prepareStatement("SELECT * FROM student WHERE email=? AND password=?");
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		String email = req.getParameter("email");
+		String password = req.getParameter("password");
+		
+		try {
+			statement.setString(1, email);
+			statement.setString(2, password);
+			
+			ResultSet rs = statement.executeQuery();
+			RequestDispatcher reqDis;
+			if(rs.next()) {
+				reqDis = req.getRequestDispatcher("homeServlet");
+				req.setAttribute("message", "Login Successful: Your email " + email );
+				reqDis.forward(req, res);
+			} else {
+				reqDis = req.getRequestDispatcher("login.html");
+				reqDis.include(req, res);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Override
+	public void destroy() {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+}
