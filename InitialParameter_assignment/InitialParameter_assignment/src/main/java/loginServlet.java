@@ -56,8 +56,8 @@ public class loginServlet extends HttpServlet {
 				req.setAttribute("message", "Login Successful: Your email " + email );
 				reqDis.forward(req, res);
 			} else {
-				reqDis = req.getRequestDispatcher("login.html");
-				reqDis.include(req, res);
+					reqDis = req.getRequestDispatcher("login.html");
+					reqDis.include(req, res);
 			}
 			
 		} catch (SQLException e) {
